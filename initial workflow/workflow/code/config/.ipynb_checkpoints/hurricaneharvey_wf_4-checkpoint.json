@@ -1,0 +1,23 @@
+{
+  "setup": {
+    "disaster_dir": "./data/hurricaneharvey",
+    "twitter_retrieval_dir": "/twitter_retrieval",
+    "processed_datasets_dir": "/processed_datasets",
+    "vectorized_datasets_dir": "/vectorized_datasets",
+    "disaster_name": "hurricaneharvey",
+    "run_name": "hurricaneharvey_3",
+    "method": "vectorize"
+  },
+ "vectorizing": {
+    "filename": "hurricaneharvey_10000.csv",
+    "method": "tfidf"
+  },
+  "clustering": {
+    "method": "KMeans",
+    "n_clusters": "20"
+
+  },
+  "retrieval": {},
+  "processing": {},
+  "modeling": {}
+}

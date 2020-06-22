@@ -1,0 +1,20 @@
+{
+  "setup": {
+    "disaster_dir": "./data/hurricaneharvey",
+    "dataset_dir": "/vectorized_datasets",
+    "models_dir": "/gridsearch_models",
+    "disaster_name": "hurricaneharvey",
+    "run_name": "hurricaneharvey_1",
+    "method": "gridsearch"
+  },
+  "gridsearch": {
+    "pipeline": {"cvec":"TFIDF",
+                "logreg":"LogisticRegression"},
+    "pipeline_params":{
+    "cvec__max_features": [1000, 5000, 10000],
+    "cvec__ngram_range": ["(1, 1)", "(1, 2)"],
+    "cvec__stop_words": ["None", "english", "custom_words"],
+    "logreg__max_iter": [500]
+    }
+  }
+}

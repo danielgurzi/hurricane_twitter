@@ -1,0 +1,37 @@
+#This is similar to what Jared did but not the same. I had to use nice to give my process the highest priority. Also tried a different seed list. NER doesn't make sense the way it has been applied here.
+sudo nice -n -10 prodigy sense2vec.teach hoax_hurricanes ./s2v_old/ --seeds `cat hoax_seeds.txt`
+
+prodigy terms.to-patterns hurricanes --label HOAX --spacy-model en_core_web_lg > ./data/harvey_model_annotations.jsonl
+
+prodigy train -n 20 -d 0.2 ner harvey_model_annotations en_vectors_web_lg --init-tok2vec ./models/tok2vec_cd8_model289.bin --output ./temp_model --eval-split 0.3 >> ner_train.out
+
+prodigy train-curve ner harvey_model_annotations en_vectors_web_lg --init-tok2vec ./models/tok2vec_cd8_model289.bin --eval-split 0.3
+# The seeds for creating my annotations for NER teach were different than Jared's, so I used his instead.
+
+#This is the start of textcat: 1) pretrain 2) textcat.teach 3) train textcat
+
+#pretrain to generate your own context-specific vectors. I tried using s2v_old, and it didn't work. Also used conspiracy_3000 for consistency.
+
+python -m spacy pretrain ./Jared/conspiracy_3000.jsonl en_vectors_web_lg ./models/pretrain_conspiracy_3000
+
+#Teach using Jared's NER model and with my pretrained vectors. Use one of the model vectors generated from pretraining. The conspiracy_3000 doesn't have enough overlap with the combined dataset of conspiracy_3000 which is why this may be having a hard time generating teaching samples that are actually helpful with annotation.
+
+prodigy textcat.teach text_class_hurricane_conspiracy ./Jared/temp_model/ ./data/conspiracy_3000.jsonl --label HOAX --patterns ./Jared/harvey_model_annotations.jsonl --init-tok2vec models/pretrain_conspiracy_3000/model545.bin
+
+prodigy train textcat text_class_hurricane_conspiracy "./Jared/temp_model/" --output "./models/pretrain_conspiracy_3000_2
+
+
+#On shuffled dataset
+
+prodigy textcat.teach text_class_hurricane_conspiracy ./Jared/temp_model/ ./data/conspiracy_3000.jsonl --label HOAX --patterns ./Jared/harvey_model_annotations.jsonl --init-tok2vec models/pretrain_conspiracy_3000/model545.bin
+
+prodigy train textcat hoaxes_harvey "./Jared/temp_model/" --output "./models/model_textcat_model" -t2v "./models/pretrain_conspiracy_3000/model545.bin"
+
+#Trying different vectors
+prodigy textcat.teach text_class_hurricane_conspiracy_2 ./Jared/temp_model/ ./data/hurricaneharvey_10000.jsonl --label HOAX --patterns ./Jared/harvey_model_annotations.jsonl --init-tok2vec models/pretrain_conspiracy_3000/model545.bin
+
+prodigy train textcat text_class_hurricane_conspiracy "./Jared/temp_model/" --output "./models/pretrain_conspiracy_3000_2"
+
+prodigy train textcat text_class_hurricane_conspiracy "./Jared/temp_model/" --output "./model_temp_model_ner" >> textcat_conspiracy.out
+
+prodigy textcat.teach hoaxes_harvey ./Jared/temp_model/ ./data/hurricaneharvey_10000.jsonl --label HOAX --patterns ./Jared/harvey_model_annotations.jsonl --init-tok2vec models/pretrain_conspiracy_3000/model545.bin

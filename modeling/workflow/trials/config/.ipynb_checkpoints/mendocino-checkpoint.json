@@ -1,0 +1,58 @@
+{
+  "setup": {
+    "disaster_dir": "./data/hurricaneharvey",
+    "twitter_retrieval_dir": "/twitter_retrieval",
+    "processed_datasets_dir": "/processed_datasets",
+    "vectorized_datasets_dir": "/vectorized_datasets",
+    "disaster_name": "hurricaneharvey",
+    "run_name": "hurricaneharvey_1",
+    "method": "gridsearch"
+  },
+  "gridsearch": {
+    "pipeline": {"cvec":"CountVectorizer",
+                "logreg":"LogisticRegression"},
+    "pipeline_params":{
+    "cvec__max_features": [1000, 5000, 10000],
+    "cvec__ngram_range": ["(1, 1)", "(1, 2)"],
+    "cvec__stop_words": ["None", "english", "custom_words"],
+    "logreg__max_iter": [500]
+    }
+  },
+  "retrieval": {
+    "retrieve_data": false,
+    "method": "GOT3",
+    "query": "#MendocinoComplex",
+    "start_date": "2018-07-26",
+    "end_date": "2018-10-1",
+    "max_tweets": "10000"
+  },
+  "processing": {
+    "process_by_user": false,
+    "disaster_specific_stopwords": [
+      "mendocino",
+      "ca",
+      "wildfire",
+      "mendocinocomplex",
+      "wildfires",
+      "ventura",
+      "montecito",
+      "cal",
+      "cal_fire"
+    ]
+  },
+  "vectorizing": {
+    "filename": "mendocinocomplex_retweets",
+    "method": "tfidf",
+    "max_features": "1000",
+    "ngram_range": "(1, 2)"
+  },
+  "clustering": {
+    "method": "KMeans",
+    "n_clusters": [
+      "20"
+    ]
+  },
+  "modeling": {
+    "method": "LogisticRegression"
+  }
+}
